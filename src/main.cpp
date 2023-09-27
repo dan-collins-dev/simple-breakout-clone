@@ -3,7 +3,8 @@
 #include <SDL2/SDL_image.h>
 #include <SDL2/SDL_ttf.h>
 #include <SDL2/SDL_mixer.h>
-
+#include <SDL2/SDL_mouse.h>
+#include "Paddle.h"
 
 int main(int argc, char* args[])
 {
@@ -11,7 +12,9 @@ int main(int argc, char* args[])
     SDL_Renderer *renderer = nullptr;
     bool isRunning = true;
     SDL_Event e;
-    SDL_Rect paddle = {800/4, 640/3, 32*4, 16};
+    
+    Paddle *paddle = nullptr;
+    paddle = new Paddle();
     
     if (SDL_Init(SDL_INIT_EVERYTHING) == 0)
     {
@@ -26,18 +29,23 @@ int main(int argc, char* args[])
             {
                 isRunning = false;
             }
+        
             // Update
+            paddle->update();
+            
+            
             // Draw
             SDL_SetRenderDrawColor(renderer, 0, 0, 0, 255);
             SDL_RenderClear(renderer);
-            
-            SDL_SetRenderDrawColor( renderer, 0, 255, 0, 255 );
-            SDL_RenderDrawRect(renderer, &paddle);
+            SDL_SetRenderDrawColor(renderer, 0, 255, 0, 255);
+            SDL_RenderDrawRect(renderer, paddle->get_rect());
             SDL_RenderPresent(renderer);
             
             
         }
     }
+    
+    delete paddle;
     
     SDL_DestroyWindow(window);
     SDL_DestroyRenderer(renderer);
