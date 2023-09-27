@@ -1,7 +1,7 @@
 #ifndef PADDLE_H
 #define PADDLE_H
 
-#include <SDL2/SDL.h>
+#include "Game.h"
 
 class Paddle
 {
@@ -10,6 +10,7 @@ public:
     ~Paddle();
     SDL_Rect* get_rect();
     void update();
+    void draw();
  
 private:
 

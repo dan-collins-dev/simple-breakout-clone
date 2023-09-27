@@ -1,52 +1,31 @@
 #include <iostream>
-#include <SDL2/SDL.h>
-#include <SDL2/SDL_image.h>
-#include <SDL2/SDL_ttf.h>
-#include <SDL2/SDL_mixer.h>
-#include <SDL2/SDL_mouse.h>
+//#include <SDL2/SDL.h>
+//#include <SDL2/SDL_image.h>
+//#include <SDL2/SDL_ttf.h>
+//#include <SDL2/SDL_mixer.h>
+//#include <SDL2/SDL_mouse.h>
+
 #include "Paddle.h"
+#include "Game.h"
+
+Game *game = nullptr;
+
+const int SCREEN_WIDTH = 800;
+const int SCREEN_HEIGHT = 640;
 
 int main(int argc, char* args[])
 {
-    SDL_Window *window = nullptr;
-    SDL_Renderer *renderer = nullptr;
-    bool isRunning = true;
-    SDL_Event e;
+    game = new Game();
+    game->initialize("Simple Breakout Clone", 800 , 640);
     
-    Paddle *paddle = nullptr;
-    paddle = new Paddle();
-    
-    if (SDL_Init(SDL_INIT_EVERYTHING) == 0)
+    while (game->running())
     {
-        window = SDL_CreateWindow("Simple Breakout Clone", SDL_WINDOWPOS_CENTERED, SDL_WINDOWPOS_CENTERED, 800, 640, SDL_WINDOW_SHOWN);
-        renderer = SDL_CreateRenderer(window, -1, 0);
-        
-        while (isRunning) 
-        {
-            SDL_PollEvent(&e);
-            // Get Input
-            if (e.type == SDL_QUIT)
-            {
-                isRunning = false;
-            }
-        
-            // Update
-            paddle->update();
-            
-            
-            // Draw
-            SDL_SetRenderDrawColor(renderer, 0, 0, 0, 255);
-            SDL_RenderClear(renderer);
-            SDL_SetRenderDrawColor(renderer, 0, 255, 0, 255);
-            SDL_RenderDrawRect(renderer, paddle->get_rect());
-            SDL_RenderPresent(renderer);
-            
-            
-        }
+        game->handleEvents();
+        game->update();
+        game->draw();
     }
     
-    delete paddle;
-    
-    SDL_DestroyWindow(window);
-    SDL_DestroyRenderer(renderer);
+    game->cleanup();
+
+    return 0;
 }
