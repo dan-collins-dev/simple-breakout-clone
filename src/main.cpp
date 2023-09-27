@@ -15,7 +15,7 @@ int main(int argc, char* args[])
     
     if (SDL_Init(SDL_INIT_EVERYTHING) == 0)
     {
-        window = SDL_CreateWindow("Breakout", SDL_WINDOWPOS_CENTERED, SDL_WINDOWPOS_CENTERED, 800, 640, SDL_WINDOW_SHOWN);
+        window = SDL_CreateWindow("Simple Breakout Clone", SDL_WINDOWPOS_CENTERED, SDL_WINDOWPOS_CENTERED, 800, 640, SDL_WINDOW_SHOWN);
         renderer = SDL_CreateRenderer(window, -1, 0);
         
         while (isRunning) 
