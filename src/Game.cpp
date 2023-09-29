@@ -1,9 +1,11 @@
-#include "Game.h"
-#include "Paddle.h"
+#include "../include/Game.h"
+#include "../include/Paddle.h"
+#include "../include/Ball.h"
 
 SDL_Renderer *Game::renderer = nullptr;
 
 Paddle *paddle = nullptr;
+Ball *ball = nullptr;
 
 Game::Game()
 {
@@ -37,6 +39,7 @@ void Game::initialize(const char* window_title, int width, int height)
     }
     
     paddle = new Paddle();
+    ball = new Ball();    
 }
 
 void Game::handleEvents()
@@ -61,6 +64,12 @@ void Game::handleEvents()
 void Game::update()
 {
     paddle->update();
+    ball->update();
+    if (SDL_HasIntersection(ball->get_rect(), paddle->get_rect()))
+    {
+        std::cout << "Intersection" << std::endl;
+    }
+    
 }
 
 void Game::draw()
@@ -69,6 +78,7 @@ void Game::draw()
     SDL_RenderClear(renderer);
     
     paddle->draw();
+    ball->draw();
     
 	SDL_RenderPresent(renderer);
 }
@@ -77,6 +87,9 @@ void Game::cleanup()
 {
     std::cout << "Entering Game Cleanup" << std::endl;
     delete paddle;
+    delete ball;
+    paddle = nullptr;
+    ball = nullptr;
     SDL_DestroyWindow(window);
     SDL_DestroyRenderer(renderer);
 }

@@ -1,7 +1,7 @@
 #ifndef PADDLE_H
 #define PADDLE_H
 
-#include "Game.h"
+#include "../include/Game.h"
 
 class Paddle
 {

@@ -1,4 +1,4 @@
-#include "Paddle.h"
+#include "../include/Paddle.h"
 
 Paddle::Paddle()
 {
@@ -12,7 +12,6 @@ Paddle::~Paddle()
 
 SDL_Rect* Paddle::get_rect()
 {
-    std::cout << "From get rect" << std::endl;
     return &paddle_rect;
 }
 

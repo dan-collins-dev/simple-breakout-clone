@@ -1,12 +1,5 @@
 #include <iostream>
-//#include <SDL2/SDL.h>
-//#include <SDL2/SDL_image.h>
-//#include <SDL2/SDL_ttf.h>
-//#include <SDL2/SDL_mixer.h>
-//#include <SDL2/SDL_mouse.h>
-
-#include "Paddle.h"
-#include "Game.h"
+#include "../include/Game.h"
 
 Game *game = nullptr;
 
@@ -26,6 +19,8 @@ int main(int argc, char* args[])
     }
     
     game->cleanup();
+    delete game;
+    game = nullptr;
 
     return 0;
 }
