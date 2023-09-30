@@ -3,6 +3,7 @@
 #include "../include/Ball.h"
 
 SDL_Renderer *Game::renderer = nullptr;
+SDL_Rect Game::gameViewPort = {0, 0, 600, 640};
 
 Paddle *paddle = nullptr;
 Ball *ball = nullptr;
@@ -27,6 +28,8 @@ void Game::initialize(const char* window_title, int width, int height)
             width, height, SDL_WINDOW_SHOWN);
             
         renderer = SDL_CreateRenderer(window, -1, 0);
+
+        
         
         SDL_ShowCursor(SDL_DISABLE);
         SDL_SetRelativeMouseMode(SDL_TRUE);
@@ -35,9 +38,30 @@ void Game::initialize(const char* window_title, int width, int height)
 		{
 			SDL_SetRenderDrawColor(renderer, 0, 0, 0, 255);
 		}
+        if (TTF_Init() == -1) {
+            std::cout << "TTF Did not init" << std::endl;
+        }
+        else{
+            std::cout << "TFF INIT" << std::endl;
+            font = TTF_OpenFont("../res/windows_command_prompt.ttf", 16);
+        }
+
+        if (IMG_Init(IMG_INIT_PNG) == -1)
+        {
+            std::cout << "SDL_Image did not initialize." << std::endl;
+            
+        }
+        else{
+            textSurface = TTF_RenderText_Solid(font, "Testing fonts", text_color);
+        }
 		isRunning = true;
     }
     
+    
+    textTexture = SDL_CreateTextureFromSurface(renderer, textSurface);
+    textRect = {0, 0, textSurface->w, textSurface->h};
+    SDL_FreeSurface(textSurface);
+
     paddle = new Paddle();
     ball = new Ball();    
 }
@@ -64,12 +88,7 @@ void Game::handleEvents()
 void Game::update()
 {
     paddle->update();
-    ball->update();
-    if (SDL_HasIntersection(ball->get_rect(), paddle->get_rect()))
-    {
-        std::cout << "Intersection" << std::endl;
-    }
-    
+    ball->update();    
 }
 
 void Game::draw()
@@ -77,10 +96,23 @@ void Game::draw()
     SDL_SetRenderDrawColor(renderer, 0, 0, 0, 255);
     SDL_RenderClear(renderer);
     
+
+    // Draw GamePlay Stuff
+    SDL_RenderSetViewport(renderer, &gameViewPort);
+    SDL_RenderDrawRect(renderer, &gameViewPort);
+    
     paddle->draw();
     ball->draw();
     
-	SDL_RenderPresent(renderer);
+    // Score Viewport stuff
+    SDL_RenderSetViewport(renderer, &scoreViewPort);
+    SDL_SetRenderDrawColor(renderer, 240, 2, 0, 255);
+    SDL_RenderFillRect(renderer, &uiRect);
+
+    
+    // Draw the font
+	SDL_RenderCopy(renderer, textTexture, NULL, &textRect);
+    SDL_RenderPresent(renderer);
 }
 
 void Game::cleanup()
@@ -90,6 +122,8 @@ void Game::cleanup()
     delete ball;
     paddle = nullptr;
     ball = nullptr;
+    TTF_Quit();
+    IMG_Quit();
     SDL_DestroyWindow(window);
     SDL_DestroyRenderer(renderer);
 }

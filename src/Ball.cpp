@@ -1,14 +1,8 @@
 #include "../include/Ball.h"
 
-Ball::Ball()
-{
+Ball::Ball() {}
 
-}
-
-Ball::~Ball()
-{
-    
-}
+Ball::~Ball() {}
 
 SDL_Rect* Ball::get_rect()
 {
@@ -21,6 +15,18 @@ void Ball::update()
     
     ball_rect.x = mouseX - (ball_rect.w / 2);
     ball_rect.y = mouseY;
+
+    // ball_rect.x -= xVelocity;
+    // ball_rect.y -= yVelocity;
+
+    // if (ball_rect.x < 0)
+    // {
+    //     xVelocity *= -1;
+    // }
+    // if ((ball_rect.x + ball_rect.w) > 800)
+    // {
+    //     xVelocity *= -1;
+    // }
     
 }
 
