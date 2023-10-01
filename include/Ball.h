@@ -1,24 +1,24 @@
 #ifndef BALL_H
 #define BALL_H
 
-#include "../include/Game.h"
+#include "../include/Entity.h"
 
-class Ball
+class Ball : public Entity
 {
 public:
     Ball();
-    ~Ball();
-    SDL_Rect* get_rect();
-    void update();
-    void draw();
+    virtual ~Ball();
+    virtual SDL_Rect* getRect();
+    virtual void update();
+    virtual void draw();
  
 private:
 
-    SDL_Rect ball_rect = {800/4, 400, 16, 16};  // Arbitrary size atm
+    SDL_Rect ballRect {600/2, 640/2, 16, 16};  // Arbitrary size atm
     int mouseX;
     int mouseY;
-    int xVelocity {3};
-    int yVelocity {0};
+    int xVelocity {1};
+    int yVelocity {1};
     
 };
 

@@ -1,24 +1,25 @@
 #include "../include/Game.h"
 #include "../include/Paddle.h"
 #include "../include/Ball.h"
+#include "../include/Block.h"
+#include "../include/Entity.h"
 
-SDL_Renderer *Game::renderer = nullptr;
-SDL_Rect Game::gameViewPort = {0, 0, 600, 640};
+SDL_Renderer *Game::renderer {nullptr};
+SDL_Rect Game::gameViewPort {0, 0, 600, 640};
 
-Paddle *paddle = nullptr;
-Ball *ball = nullptr;
+Entity *paddle {nullptr};
+Entity *ball {nullptr};
+Entity *block {nullptr};
+Entity *block2 {nullptr};
 
-Game::Game()
-{
-    
-}
+std::list<Entity*> entities;
+std::list<Block*> blocks;
 
-Game::~Game()
-{
-    
-}
+Game::Game() {}
 
-void Game::initialize(const char* window_title, int width, int height)
+Game::~Game() {}
+
+void Game::initialize(const char* windowTitle, int width, int height)
 {
     if (SDL_Init(SDL_INIT_EVERYTHING) == 0)
     {
@@ -52,7 +53,7 @@ void Game::initialize(const char* window_title, int width, int height)
             
         }
         else{
-            textSurface = TTF_RenderText_Solid(font, "Testing fonts", text_color);
+            textSurface = TTF_RenderText_Solid(font, "Testing fonts", textColor);
         }
 		isRunning = true;
     }
@@ -63,7 +64,29 @@ void Game::initialize(const char* window_title, int width, int height)
     SDL_FreeSurface(textSurface);
 
     paddle = new Paddle();
-    ball = new Ball();    
+    ball = new Ball();
+
+    
+
+    block = new Block();
+    block2 = new Block();
+
+
+    entities.emplace_front(block2);
+    entities.emplace_front(paddle);
+    entities.emplace_front(ball);
+    entities.emplace_front(block);
+
+
+    std::cout << "List Size: " << entities.size() << std::endl;
+    for (auto e : entities) {
+        // if (dynamic_cast<Entity*>) 
+        // {
+        //     std::cout << "This is a block" << std::endl;
+        // }
+        e->takeDamage();
+    }
+
 }
 
 void Game::handleEvents()
@@ -87,8 +110,9 @@ void Game::handleEvents()
 
 void Game::update()
 {
-    paddle->update();
-    ball->update();    
+    for (auto e : entities) {
+        e->update();
+    }   
 }
 
 void Game::draw()
@@ -99,15 +123,16 @@ void Game::draw()
 
     // Draw GamePlay Stuff
     SDL_RenderSetViewport(renderer, &gameViewPort);
+    SDL_SetRenderDrawColor(renderer, 18, 206, 106, 255);
     SDL_RenderDrawRect(renderer, &gameViewPort);
     
-    paddle->draw();
-    ball->draw();
+    for (auto e : entities) {
+        e->draw();
+    }
     
     // Score Viewport stuff
     SDL_RenderSetViewport(renderer, &scoreViewPort);
-    SDL_SetRenderDrawColor(renderer, 240, 2, 0, 255);
-    SDL_RenderFillRect(renderer, &uiRect);
+    SDL_RenderDrawRect(renderer, &uiRect);
 
     
     // Draw the font
@@ -120,8 +145,7 @@ void Game::cleanup()
     std::cout << "Entering Game Cleanup" << std::endl;
     delete paddle;
     delete ball;
-    paddle = nullptr;
-    ball = nullptr;
+
     TTF_Quit();
     IMG_Quit();
     SDL_DestroyWindow(window);

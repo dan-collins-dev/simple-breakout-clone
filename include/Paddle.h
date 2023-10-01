@@ -1,20 +1,20 @@
 #ifndef PADDLE_H
 #define PADDLE_H
 
-#include "../include/Game.h"
+#include "../include/Entity.h"
 
-class Paddle
+class Paddle : public Entity
 {
 public:
     Paddle();
     ~Paddle();
-    SDL_Rect* get_rect();
-    void update();
-    void draw();
+    virtual SDL_Rect* getRect();
+    virtual void update();
+    virtual void draw();
  
 private:
 
-    SDL_Rect paddle_rect = {800/4, 400, 32*4, 16};  // Arbitrary size atm
+    SDL_Rect paddleRect = {800/4, 400, 32*4, 16};  // Arbitrary size atm
     int mouseX;
     int mouseY;
     

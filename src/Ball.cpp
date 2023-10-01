@@ -1,37 +1,56 @@
 #include "../include/Ball.h"
+#include "../include/Paddle.h"
 
 Ball::Ball() {}
 
 Ball::~Ball() {}
 
-SDL_Rect* Ball::get_rect()
+SDL_Rect* Ball::getRect()
 {
-    return &ball_rect;
+    return &ballRect;
 }
 
 void Ball::update()
 {
-    SDL_GetMouseState(&mouseX, &mouseY);
-    
-    ball_rect.x = mouseX - (ball_rect.w / 2);
-    ball_rect.y = mouseY;
+    // Check for collisions
+    // If a block:
+    //  Reflect based on where the ball hit the block
+    //  Remove block from block list and free it
 
-    // ball_rect.x -= xVelocity;
-    // ball_rect.y -= yVelocity;
+    // If paddle:
+    //  Reflect based on where the ball hit the paddle
 
-    // if (ball_rect.x < 0)
-    // {
-    //     xVelocity *= -1;
-    // }
-    // if ((ball_rect.x + ball_rect.w) > 800)
-    // {
-    //     xVelocity *= -1;
-    // }
+
+    // SDL_GetMouseState(&mouseX, &mouseY);
     
+    // ballRect.x = mouseX - (ballRect.w / 2);
+    // ballRect.y = mouseY;
+
+    ballRect.x -= xVelocity;
+    ballRect.y -= yVelocity;
+
+    if (ballRect.x < 0)
+    {
+        xVelocity *= -1;
+    }
+    if ((ballRect.x + ballRect.w) > 600)
+    {
+        xVelocity *= -1;
+    }
+    
+    if (ballRect.y < 0)
+    {
+        yVelocity *= -1;
+    }
+    if ((ballRect.y + ballRect.h) > 640)
+    {
+        yVelocity *= -1;
+    
+    }
 }
 
 void Ball::draw()
 {
     SDL_SetRenderDrawColor(Game::renderer, 0, 255, 233, 255);
-    SDL_RenderDrawRect(Game::renderer, &ball_rect);
+    SDL_RenderDrawRect(Game::renderer, &ballRect);
 }

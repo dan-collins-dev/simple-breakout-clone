@@ -29,6 +29,10 @@ int main(int argc, char* args[])
         // Work out frame time (how long it takes to handle events,
         // upates, and rendering
         frameTime = SDL_GetTicks() - frameStart;
+
+        // Debugging frame times
+        //std::cout << "Frame Time: " << frameTime << std::endl;
+        //std::cout << "Frame Delay: " << frameDelay << std::endl;
         
         // Check to see if we need to delay rendering next frame
         if (frameDelay > frameTime)
@@ -39,7 +43,6 @@ int main(int argc, char* args[])
     
     game->cleanup();
     delete game;
-    game = nullptr;
 
     return 0;
 }
