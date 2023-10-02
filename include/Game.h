@@ -21,7 +21,7 @@ public:
     void draw();
     void cleanup();
     bool running() {return isRunning;}
-    //void handleCollisions();
+    void handleCollisions();
     static SDL_Renderer *renderer;
     static SDL_Rect gameViewPort;
     SDL_Rect scoreViewPort {600, 0, 200, 640};

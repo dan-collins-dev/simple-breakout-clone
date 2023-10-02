@@ -8,14 +8,14 @@ class Block : public Entity
 public:
     Block();
     virtual ~Block();
-    virtual SDL_Rect* getRect() ;
+    virtual SDL_Rect* getRect();
     virtual void update() ;
     virtual void draw() ;
-    void takeDamage() { std::cout << "This object is damageable" << std::endl;}
+    virtual void setHit(bool value) {hit = value;}
 
 private:
     SDL_Rect blockRect {800/2, 400, 32*2, 16};  // Arbitrary size atm
-    int health {10};
+    bool hit {false};
 };
 
 #endif

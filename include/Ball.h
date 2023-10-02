@@ -11,6 +11,10 @@ public:
     virtual SDL_Rect* getRect();
     virtual void update();
     virtual void draw();
+    void setXVelocity(int value);
+    void setYVelocity(int value);
+    int getXVelocity() {return xVelocity;}
+    int getYVelocity() {return yVelocity;}
  
 private:
 

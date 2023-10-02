@@ -26,8 +26,8 @@ void Ball::update()
     // ballRect.x = mouseX - (ballRect.w / 2);
     // ballRect.y = mouseY;
 
-    ballRect.x -= xVelocity;
-    ballRect.y -= yVelocity;
+    ballRect.x += xVelocity;
+    ballRect.y += yVelocity;
 
     if (ballRect.x < 0)
     {
@@ -53,4 +53,14 @@ void Ball::draw()
 {
     SDL_SetRenderDrawColor(Game::renderer, 0, 255, 233, 255);
     SDL_RenderDrawRect(Game::renderer, &ballRect);
+}
+
+void Ball::setXVelocity(int value)
+{
+    xVelocity = value;
+}
+
+void Ball::setYVelocity(int value)
+{
+    yVelocity *= value;
 }

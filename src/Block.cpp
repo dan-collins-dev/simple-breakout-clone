@@ -1,5 +1,6 @@
 #include "../include/Block.h"
 
+
 Block::Block() {}
 
 Block::~Block() {}
@@ -11,7 +12,9 @@ SDL_Rect* Block::getRect()
 
 void Block::update()
 {
-    
+    if (hit) {
+        
+    }
     
 }
 
