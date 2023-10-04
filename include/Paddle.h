@@ -11,12 +11,14 @@ public:
     virtual SDL_Rect* getRect();
     virtual void update();
     virtual void draw();
+    virtual void setHit(bool value) {hit = value;}
  
 private:
 
     SDL_Rect paddleRect = {800/4, 400, 32*4, 16};  // Arbitrary size atm
     int mouseX;
     int mouseY;
+    bool hit {false};
     
 };
 

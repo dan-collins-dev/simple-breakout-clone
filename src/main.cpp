@@ -1,5 +1,6 @@
 #include <iostream>
 #include "../include/Game.h"
+#include <memory>
 
 Game *game {nullptr};
 
@@ -8,6 +9,7 @@ const int SCREEN_HEIGHT {640};
 
 int main(int argc, char* args[])
 {
+    
     const int FPS = 60;
     const int frameDelay = 1000 / FPS;
     

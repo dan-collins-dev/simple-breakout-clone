@@ -12,22 +12,10 @@ SDL_Rect* Ball::getRect()
 
 void Ball::update()
 {
-    // Check for collisions
-    // If a block:
-    //  Reflect based on where the ball hit the block
-    //  Remove block from block list and free it
-
-    // If paddle:
-    //  Reflect based on where the ball hit the paddle
-
-
-    // SDL_GetMouseState(&mouseX, &mouseY);
-    
-    // ballRect.x = mouseX - (ballRect.w / 2);
-    // ballRect.y = mouseY;
-
-    ballRect.x += xVelocity;
-    ballRect.y += yVelocity;
+    // Moves ball and checks if it hits walls
+    // or ceiling    
+    ballRect.x += xVelocity * speed;
+    ballRect.y += yVelocity * speed;
 
     if (ballRect.x < 0)
     {
@@ -44,8 +32,7 @@ void Ball::update()
     }
     if ((ballRect.y + ballRect.h) > 640)
     {
-        yVelocity *= -1;
-    
+        
     }
 }
 
@@ -62,5 +49,5 @@ void Ball::setXVelocity(int value)
 
 void Ball::setYVelocity(int value)
 {
-    yVelocity *= value;
+    yVelocity = value;
 }

@@ -7,6 +7,7 @@ class Block : public Entity
 {
 public:
     Block();
+    Block(int startXPos, int startYPos, int width, int height);
     virtual ~Block();
     virtual SDL_Rect* getRect();
     virtual void update() ;

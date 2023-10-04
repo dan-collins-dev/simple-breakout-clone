@@ -3,6 +3,10 @@
 
 Block::Block() {}
 
+Block::Block(int startXPos, int startYPos, int w, int h) {
+    blockRect = {startXPos, startYPos, w, h};
+}
+
 Block::~Block() {}
 
 SDL_Rect* Block::getRect()

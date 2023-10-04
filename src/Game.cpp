@@ -3,14 +3,15 @@
 #include "../include/Ball.h"
 #include "../include/Block.h"
 #include "../include/Entity.h"
+#include "../include/FontManager.h"
+#include <cstdio>
 
 SDL_Renderer *Game::renderer {nullptr};
 SDL_Rect Game::gameViewPort {0, 0, 600, 640};
 
 Entity *paddle {nullptr};
 Entity *ball {nullptr};
-Entity *block {nullptr};
-Entity *block2 {nullptr};
+
 
 std::list<Entity*> entities;
 std::list<Entity*> blocks;
@@ -45,7 +46,7 @@ void Game::initialize(const char* windowTitle, int width, int height)
         }
         else{
             std::cout << "TFF INIT" << std::endl;
-            font = TTF_OpenFont("../res/windows_command_prompt.ttf", 16);
+            
         }
 
         if (IMG_Init(IMG_INIT_PNG) == -1)
@@ -54,34 +55,73 @@ void Game::initialize(const char* windowTitle, int width, int height)
             
         }
         else{
-            textSurface = TTF_RenderText_Solid(font, "Testing fonts", textColor);
+            
         }
 		isRunning = true;
     }
     
-    
+    // Create Stats Label
+    font = TTF_OpenFont("../res/windows_command_prompt.ttf", 32);
+    textSurface = TTF_RenderText_Solid(font, "Stats", textColor);
     textTexture = SDL_CreateTextureFromSurface(renderer, textSurface);
     textRect = {0, 0, textSurface->w, textSurface->h};
+    textRect.x = uiRect.w / 3;
     SDL_FreeSurface(textSurface);
+    TTF_CloseFont(font);
+
+
+    
+    
+
+    // Create Score Label
+    scoreFont = TTF_OpenFont("../res/windows_command_prompt.ttf", 16);
+    scoreSurface = TTF_RenderText_Solid(scoreFont, "Score" , textColor);
+    scoreTexture = SDL_CreateTextureFromSurface(renderer, scoreSurface);
+    scoreRect = {0, 0, scoreSurface->w, scoreSurface->h};
+    scoreRect.x = uiRect.w / 16;
+    scoreRect.y = 40;
+    SDL_FreeSurface(scoreSurface);
+    TTF_CloseFont(scoreFont);
+
+    // // Example of coverting string to const char*
+    // std::string scoreValue = std::to_string(currentScore);
+    // const char *scoreValueString = scoreValue.c_str();
+
+    // // Create Score Value Label (Updated when score increases)
+    // scoreValueFont = TTF_OpenFont("../res/windows_command_prompt.ttf", 16);
+    // scoreValueSurface = TTF_RenderText_Solid(scoreValueFont, scoreValueString , textColor);
+    // scoreValueTexture = SDL_CreateTextureFromSurface(renderer, scoreValueSurface);
+    // scoreValueRect = {0, 0, scoreValueSurface->w, scoreValueSurface->h};
+    // scoreValueRect.x = uiRect.w / 2;
+    // scoreValueRect.y = 40;
+    // SDL_FreeSurface(scoreValueSurface);
+    // TTF_CloseFont(scoreValueFont);
+    
+    
+
+
 
     paddle = new Paddle();
     ball = new Ball();
 
-    
 
-    block = new Block();
-    block2 = new Block();
+    for (int x = 0; x < 8; x++) {
+        for (int y = 0; y < 5; y++) {
+            Block *b {nullptr};
+            b = new Block(x * 64 + 40, y * 16 + 32, 64, 16);
+            blocks.emplace_front(b);
+            entities.emplace_front(b);
+            b = nullptr;
+            delete b;
+        }
+    }
     
     entities.emplace_front(paddle);
     entities.emplace_front(ball);
-    entities.emplace_front(block);
 
-    blocks.emplace_front(block);
-
-
-    std::cout << "List Size: " << entities.size() << std::endl;
-    std::cout << "Blocks Size" << blocks.size() << std::endl;
-
+    std::cout << "Entity List Size: " << entities.size() << std::endl;
+    std::cout << "Blocks List Size: " << blocks.size() << std::endl;
+    std::cout << "Kill List Size: " << killList.size() << std::endl;
 }
 
 void Game::handleEvents()
@@ -103,108 +143,14 @@ void Game::handleEvents()
     }
 }
 
-void Game::update()
-{
-    // Check for blocks flagged as hit and remove them
-    if (blocks.size() > 0) {
-
-        for (auto b : blocks) {
-            if (SDL_HasIntersection(b->getRect(), ball->getRect())) {
-                b->setHit(true);
-                std::cout << "HIT" << std::endl;
-                SDL_Rect ballRect;
-                // ballRect = new SDL_Rect(ball->getRect()) ;
-                SDL_Rect blockRect;
-                ballRect = *ball->getRect();
-                blockRect = *b->getRect();
-                std::cout << "BLOCK RECT: " << blockRect.h << std::endl;
-                if (ballRect.y + ballRect.h > blockRect.y) {
-                    // ball->xVelocity *= -1;
-                    ball->setYVelocity(-1);
-                }
-
-            
-
-                
-                killList.push_front(b);
-            }
-
-        }
-    }
-    
-    if (SDL_HasIntersection(ball->getRect(), paddle->getRect()))
-    {
-        SDL_Rect ballRect;
-        SDL_Rect paddleRect;
-
-        ballRect = *ball->getRect();
-        paddleRect = *paddle->getRect();
-
-        if (ballRect.x < paddleRect.x + paddleRect.w / 2)
-        {
-            std::cout << "LEFT SIDE OF PADDLE HIT" << std::endl;
-            std::cout << "Ball Velocity: " << ball->getXVelocity() << std::endl;
-
-            if (ball->getXVelocity() == 1) {
-                ball->setXVelocity(-1);
-                std::cout << "Ball Velocity After Collision: " << ball->getXVelocity() << std::endl;
-            }
-            else {
-
-                ball->setXVelocity(-1);
-                std::cout << "Ball Velocity After Collision: " << ball->getXVelocity() << std::endl;
-            }
-        }
-
-        if (ballRect.x >= paddleRect.x + paddleRect.w / 2)
-        {
-            std::cout << "RIGHT SIDE OF PADDLE HIT" << std::endl;
-            std::cout << "Ball Velocity: " << ball->getXVelocity() << std::endl;
-            if (ball->getXVelocity() == -1) {
-                ball->setXVelocity(1);
-                std::cout << "Ball Velocity After Collision: " << ball->getXVelocity() << std::endl;
-            }
-            else{
-
-                ball->setXVelocity(1);
-                std::cout << "Ball Velocity After Collision: " << ball->getXVelocity() << std::endl;
-            }
-        }
-        
-        if (ballRect.y + ballRect.h > paddleRect.y) {
-            
-            ball->setYVelocity(-1);
-        }
-
+void Game::update() {
+    if (currentScore > previousScore) {
+        previousScore = currentScore;
     }
 
-    // for (auto b : blocks) {
-    //     // std::cout << "Checking for hit" << std::endl;
-    //     if (b->isHit()) {
-            
-    //         killList.push_front(b);
-    //         std::cout << "New blocks size: " << blocks.size() << std::endl;
-    //     }
-    // }
+    handleBlockCollisions();
+    handlePaddleCollisions();
 
-    // for (auto b : blocks) {
-    //     if (blocks.size() > 0) {
-    //         bool ranOnce {false};
-    //         if(SDL_HasIntersection(b->getRect(), ball->getRect()))
-    //         {
-    //             if (!ranOnce) {
-    //                 //blocks.remove(b);
-    //                 std::cout << "RAN" << std::endl;
-    //                 ranOnce = true;
-    //             }
-    //             else
-    //             {
-    //                 return;
-    //             }
-    //         }
-    //     }
-        
-    // }
     for (auto e : entities) {
         e->update();
     }
@@ -224,8 +170,7 @@ void Game::update()
     // std::cout << "Size of KillList:" << killList.size() << std::endl;
 }
 
-void Game::draw()
-{
+void Game::draw() {
     SDL_SetRenderDrawColor(renderer, 0, 0, 0, 255);
     SDL_RenderClear(renderer);
     
@@ -243,14 +188,28 @@ void Game::draw()
     SDL_RenderSetViewport(renderer, &scoreViewPort);
     SDL_RenderDrawRect(renderer, &uiRect);
 
+    // Example of coverting string to const char*
+    std::string scoreValue = std::to_string(currentScore);
+    const char *scoreValueString = scoreValue.c_str();
+
+    // Create Score Value Label (Updated when score increases)
+    scoreValueFont = TTF_OpenFont("../res/windows_command_prompt.ttf", 16);
+    scoreValueSurface = TTF_RenderText_Solid(scoreValueFont, scoreValueString , textColor);
+    scoreValueTexture = SDL_CreateTextureFromSurface(renderer, scoreValueSurface);
+    scoreValueRect = {0, 0, scoreValueSurface->w, scoreValueSurface->h};
+    scoreValueRect.x = uiRect.w / 2 + uiRect.w / 3;
+    scoreValueRect.y = 40;
+    SDL_FreeSurface(scoreValueSurface);
+    TTF_CloseFont(scoreValueFont);
     
-    // Draw the font
 	SDL_RenderCopy(renderer, textTexture, NULL, &textRect);
+    SDL_RenderCopy(renderer, scoreTexture, NULL, &scoreRect);
+    SDL_RenderCopy(renderer, scoreValueTexture, NULL, &scoreValueRect);
+
     SDL_RenderPresent(renderer);
 }
 
-void Game::cleanup()
-{
+void Game::cleanup() {
     std::cout << "Entering Game Cleanup" << std::endl;
     std::cout << blocks.size() << std::endl;
     std::cout << killList.size() << std::endl;
@@ -262,4 +221,102 @@ void Game::cleanup()
     IMG_Quit();
     SDL_DestroyWindow(window);
     SDL_DestroyRenderer(renderer);
+}
+
+void Game::handlePaddleCollisions() {
+    
+    if (SDL_HasIntersection(ball->getRect(), paddle->getRect()))
+    {
+        //paddle->setHit(true);
+        SDL_Rect ballRect;
+        SDL_Rect paddleRect;
+
+        ballRect = *ball->getRect();
+        paddleRect = *paddle->getRect();
+
+        if (ballRect.x < paddleRect.x + paddleRect.w / 2) {
+            //std::cout << "LEFT SIDE OF PADDLE HIT" << std::endl;
+            //std::cout << "Ball Velocity: " << ball->getXVelocity() << std::endl;
+
+            if (ball->getXVelocity() == 1) {
+                ball->setXVelocity(-1);
+                //std::cout << "Ball Velocity After Collision: " << ball->getXVelocity() << std::endl;
+            }
+            else {
+                ball->setXVelocity(-1);
+                //std::cout << "Ball Velocity After Collision: " << ball->getXVelocity() << std::endl;
+            }  
+        }
+
+        if (ballRect.x >= paddleRect.x + paddleRect.w / 2) {
+            //std::cout << "RIGHT SIDE OF PADDLE HIT" << std::endl;
+            //std::cout << "Ball Velocity: " << ball->getXVelocity() << std::endl;
+            if (ball->getXVelocity() == -1) {
+                ball->setXVelocity(1);
+                //std::cout << "Ball Velocity After Collision: " << ball->getXVelocity() << std::endl;
+            }
+            else {
+                ball->setXVelocity(1);
+                //std::cout << "Ball Velocity After Collision: " << ball->getXVelocity() << std::endl;
+            }
+        }
+        
+        ball->setYVelocity(-1);
+    }
+}
+
+void Game::handleBlockCollisions() {
+    if (blocks.size() > 0) {
+
+        for (auto b : blocks) {
+
+            if (SDL_HasIntersection(b->getRect(), ball->getRect())) {
+                currentScore += 1;
+                b->setHit(true);
+                SDL_Rect ballRect;
+                SDL_Rect blockRect;
+                ballRect = *ball->getRect();
+                blockRect = *b->getRect();
+
+                if (ballRect.y + ballRect.h > blockRect.y) {
+                    int newDirection = ball->getYVelocity() * -1;
+                    ball->setYVelocity(newDirection);
+                }
+                else if (ballRect.y > blockRect.y + blockRect.h) {
+                    int newDirection = ball->getYVelocity() * -1;
+                    ball->setYVelocity(newDirection);
+                }
+
+                if (ballRect.x < blockRect.x + blockRect.w / 2) {
+                    //std::cout << "LEFT SIDE OF BLOCK HIT" << std::endl;
+                    //std::cout << "Ball Velocity: " << ball->getXVelocity() << std::endl;
+                
+                    if (ball->getXVelocity() == 1) {
+                        ball->setXVelocity(-1);
+                        //std::cout << "Ball Velocity After Collision: " << ball->getXVelocity() << std::endl;
+                    }
+                    else {
+
+                        ball->setXVelocity(-1);
+                        //std::cout << "Ball Velocity After Collision: " << ball->getXVelocity() << std::endl;
+                    }
+                }
+
+                if (ballRect.x >= blockRect.x + blockRect.w / 2) {
+                    //std::cout << "RIGHT SIDE OF BLOCK HIT" << std::endl;
+                    //std::cout << "Ball Velocity: " << ball->getXVelocity() << std::endl;
+                    if (ball->getXVelocity() == -1) {
+                        ball->setXVelocity(1);
+                        //std::cout << "Ball Velocity After Collision: " << ball->getXVelocity() << std::endl;
+                    }
+                    else {
+                        ball->setXVelocity(1);
+                        //std::cout << "Ball Velocity After Collision: " << ball->getXVelocity() << std::endl;
+                    }
+                }
+
+                killList.push_front(b);
+            }
+        }
+    }
 }

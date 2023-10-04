@@ -18,9 +18,10 @@ public:
  
 private:
 
-    SDL_Rect ballRect {600/2, 640/2, 16, 16};  // Arbitrary size atm
+    SDL_Rect ballRect {300, 0, 16, 16};  // Arbitrary size atm
     int mouseX;
     int mouseY;
+    int speed {1};
     int xVelocity {1};
     int yVelocity {1};
     

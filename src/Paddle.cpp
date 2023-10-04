@@ -24,7 +24,7 @@ void Paddle::update()
         paddleRect.x = Game::gameViewPort.x + Game::gameViewPort.w - paddleRect.w - 1;
     }
     
-    paddleRect.y = 600;
+    paddleRect.y = 580;
 }
 
 void Paddle::draw()
