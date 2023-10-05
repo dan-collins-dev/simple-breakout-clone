@@ -18,13 +18,13 @@ public:
  
 private:
 
-    SDL_Rect ballRect {300, 0, 16, 16};  // Arbitrary size atm
+    SDL_Rect ballRect {300, 200, 16, 16};  // Arbitrary size atm
     int mouseX;
     int mouseY;
-    int speed {1};
+    int speed {3};
     int xVelocity {1};
     int yVelocity {1};
-    
+    Mix_Chunk *bounceSFX {nullptr}; // Ball sfx for hitting walls
 };
 
 #endif

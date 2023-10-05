@@ -25,12 +25,13 @@ public:
     static SDL_Rect gameViewPort;
     void handlePaddleCollisions();
     void handleBlockCollisions();
-    // int getScore() {return score;}
-    // void setScore(int value)
+    //int getScore() {return currentScore;}
+    //void setScore(int value) {currentScore = value;}
     SDL_Rect scoreViewPort {600, 0, 200, 640};
     SDL_Rect uiRect {0, 0, 200, 640};
-    
-    
+
+    static int currentScore;
+
 private:
     bool isRunning = false;
     SDL_Window *window;
@@ -54,8 +55,11 @@ private:
     SDL_Texture* scoreValueTexture;
     SDL_Rect scoreValueRect;
 
+    // Block Break SFX
+    Mix_Chunk *blockDestroySFX {nullptr};
+    Mix_Chunk *paddleSFX {nullptr};
 
-    int currentScore {0};
+
     int previousScore {0};
 };
 

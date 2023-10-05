@@ -1,7 +1,11 @@
 #include "../include/Ball.h"
 #include "../include/Paddle.h"
+#include <random>
+#include "../include/Game.h"
 
-Ball::Ball() {}
+Ball::Ball() {
+    bounceSFX = Mix_LoadWAV("../res/ball.wav");
+}
 
 Ball::~Ball() {}
 
@@ -19,20 +23,28 @@ void Ball::update()
 
     if (ballRect.x < 0)
     {
+        Mix_PlayChannel(-1, bounceSFX, 0);
         xVelocity *= -1;
     }
     if ((ballRect.x + ballRect.w) > 600)
     {
+        Mix_PlayChannel(-1, bounceSFX, 0);
         xVelocity *= -1;
     }
     
     if (ballRect.y < 0)
     {
+        Mix_PlayChannel(-1, bounceSFX, 0);
         yVelocity *= -1;
     }
     if ((ballRect.y + ballRect.h) > 640)
     {
-        
+        int randomXPos = std::rand() % ((600 - ballRect.x));
+        ballRect.x = randomXPos;
+        ballRect.y = 400;
+        //int cScore = Game::getScore();
+        //Game::setScore(cScore);
+        Game::currentScore -= 40;
     }
 }
 

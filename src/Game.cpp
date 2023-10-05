@@ -9,9 +9,12 @@
 SDL_Renderer *Game::renderer {nullptr};
 SDL_Rect Game::gameViewPort {0, 0, 600, 640};
 
+int Game::currentScore = 0;
+
 Entity *paddle {nullptr};
 Entity *ball {nullptr};
 
+FontManager *GameFont {nullptr};
 
 std::list<Entity*> entities;
 std::list<Entity*> blocks;
@@ -60,7 +63,9 @@ void Game::initialize(const char* windowTitle, int width, int height)
 		isRunning = true;
     }
     
-    // Create Stats Label
+    
+    
+    //Create Stats Label
     font = TTF_OpenFont("../res/windows_command_prompt.ttf", 32);
     textSurface = TTF_RenderText_Solid(font, "Stats", textColor);
     textTexture = SDL_CreateTextureFromSurface(renderer, textSurface);
@@ -69,6 +74,14 @@ void Game::initialize(const char* windowTitle, int width, int height)
     SDL_FreeSurface(textSurface);
     TTF_CloseFont(font);
 
+    
+    // GameFont = new FontManager();
+    // FontData *statFontData {nullptr};
+    // std::cout << "Crash afteer creating ptr"  << std::endl;
+    // statFontData = GameFont->createFontData("../res/windows_command_prompt.ttf", 32, textColor);
+    // std::cout << "STAT FONT DATA RECT X" << statFontData->rect.x << std::endl;
+    // //GameFont->cleanUp();
+    
 
     
     
@@ -82,7 +95,7 @@ void Game::initialize(const char* windowTitle, int width, int height)
     scoreRect.y = 40;
     SDL_FreeSurface(scoreSurface);
     TTF_CloseFont(scoreFont);
-
+    Mix_OpenAudio( 44100, MIX_DEFAULT_FORMAT, 2, 2048 );
     // // Example of coverting string to const char*
     // std::string scoreValue = std::to_string(currentScore);
     // const char *scoreValueString = scoreValue.c_str();
@@ -97,8 +110,8 @@ void Game::initialize(const char* windowTitle, int width, int height)
     // SDL_FreeSurface(scoreValueSurface);
     // TTF_CloseFont(scoreValueFont);
     
-    
-
+    blockDestroySFX = Mix_LoadWAV("../res/blockDestruction.wav");
+    paddleSFX = Mix_LoadWAV("../res/paddleSFX.wav");
 
 
     paddle = new Paddle();
@@ -133,21 +146,17 @@ void Game::handleEvents()
     {
         isRunning = false;
     }
-    else if (e.type == SDL_KEYDOWN) 
+    
+
+    const Uint8* currentKeyStates = SDL_GetKeyboardState( NULL );
+    if( currentKeyStates[ SDL_SCANCODE_ESCAPE ] )
     {
-        if (e.key.keysym.sym == SDLK_ESCAPE)
-        {
-            SDL_ShowCursor(SDL_ENABLE);
+        SDL_ShowCursor(SDL_ENABLE);
             SDL_SetRelativeMouseMode(SDL_FALSE);
-        }
     }
 }
 
 void Game::update() {
-    if (currentScore > previousScore) {
-        previousScore = currentScore;
-    }
-
     handleBlockCollisions();
     handlePaddleCollisions();
 
@@ -162,12 +171,12 @@ void Game::update() {
         }
     }
     
-    // if (blocks.empty()) {
-    //     isRunning = false;
-    // }
-    // std::cout << "End of Game Loop" << std::endl;
-    // std::cout << "Size of Blocks:" << blocks.size() << std::endl;
-    // std::cout << "Size of KillList:" << killList.size() << std::endl;
+    if (blocks.empty()) {
+        isRunning = false;
+    }
+    std::cout << "End of Game Loop" << std::endl;
+    std::cout << "Size of Blocks:" << blocks.size() << std::endl;
+    std::cout << "Size of KillList:" << killList.size() << std::endl;
 }
 
 void Game::draw() {
@@ -206,6 +215,12 @@ void Game::draw() {
     SDL_RenderCopy(renderer, scoreTexture, NULL, &scoreRect);
     SDL_RenderCopy(renderer, scoreValueTexture, NULL, &scoreValueRect);
 
+    //FontData newFont = *GameFont->createFontData("../res/windows_command_prompt.ttf", 64, textColor);
+
+    //SDL_RenderCopy(renderer, newFont.texture, NULL, &newFont.rect);
+
+    //GameFont->cleanUp();
+
     SDL_RenderPresent(renderer);
 }
 
@@ -219,14 +234,17 @@ void Game::cleanup() {
 
     TTF_Quit();
     IMG_Quit();
+
     SDL_DestroyWindow(window);
     SDL_DestroyRenderer(renderer);
+	SDL_Quit();
 }
 
 void Game::handlePaddleCollisions() {
     
     if (SDL_HasIntersection(ball->getRect(), paddle->getRect()))
     {
+        Mix_PlayChannel(-1, paddleSFX, 0);
         //paddle->setHit(true);
         SDL_Rect ballRect;
         SDL_Rect paddleRect;
@@ -271,7 +289,8 @@ void Game::handleBlockCollisions() {
         for (auto b : blocks) {
 
             if (SDL_HasIntersection(b->getRect(), ball->getRect())) {
-                currentScore += 1;
+                Mix_PlayChannel(-1, blockDestroySFX, 0);
+                currentScore += 100;
                 b->setHit(true);
                 SDL_Rect ballRect;
                 SDL_Rect blockRect;
