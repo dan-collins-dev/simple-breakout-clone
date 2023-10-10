@@ -7,9 +7,6 @@
 #include <SDL2/SDL_mixer.h>
 #include <iostream>
 #include <list>
-#include "../include/FontManager.h"
-//#include "../include/Block.h"
-//#include "../include/Entity.h"
 
 class Game {
 public:
@@ -25,8 +22,6 @@ public:
     static SDL_Rect gameViewPort;
     void handlePaddleCollisions();
     void handleBlockCollisions();
-    //int getScore() {return currentScore;}
-    //void setScore(int value) {currentScore = value;}
     SDL_Rect scoreViewPort {600, 0, 200, 640};
     SDL_Rect uiRect {0, 0, 200, 640};
 
@@ -58,9 +53,6 @@ private:
     // Block Break SFX
     Mix_Chunk *blockDestroySFX {nullptr};
     Mix_Chunk *paddleSFX {nullptr};
-
-
-    int previousScore {0};
 };
 
 #endif

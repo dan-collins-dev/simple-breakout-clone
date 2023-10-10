@@ -9,21 +9,15 @@ Block::Block(int startXPos, int startYPos, int w, int h) {
 
 Block::~Block() {}
 
-SDL_Rect* Block::getRect()
-{
+SDL_Rect* Block::getRect() {
     return &blockRect;
 }
 
-void Block::update()
-{
-    if (hit) {
-        
-    }
-    
+void Block::update() {
+
 }
 
-void Block::draw()
-{
+void Block::draw() {
     SDL_SetRenderDrawColor(Game::renderer, 255, 0, 0, 255);
     SDL_RenderDrawRect(Game::renderer, &blockRect);
 }

@@ -3,8 +3,7 @@
 
 #include "../include/Entity.h"
 
-class Paddle : public Entity
-{
+class Paddle : public Entity {
 public:
     Paddle();
     ~Paddle();
@@ -19,7 +18,6 @@ private:
     int mouseX;
     int mouseY;
     bool hit {false};
-    
 };
 
 #endif

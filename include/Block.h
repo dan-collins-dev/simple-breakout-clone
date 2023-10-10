@@ -3,8 +3,7 @@
 
 #include "../include/Entity.h"
 
-class Block : public Entity
-{
+class Block : public Entity {
 public:
     Block();
     Block(int startXPos, int startYPos, int width, int height);

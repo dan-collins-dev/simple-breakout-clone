@@ -3,8 +3,7 @@
 
 #include "../include/Entity.h"
 
-class Ball : public Entity
-{
+class Ball : public Entity {
 public:
     Ball();
     virtual ~Ball();

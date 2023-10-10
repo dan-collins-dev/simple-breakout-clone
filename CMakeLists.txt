@@ -14,9 +14,7 @@ set(SOURCES ${CMAKE_SOURCE_DIR}/src/main.cpp
     ${CMAKE_SOURCE_DIR}/include/Paddle.h 
     ${CMAKE_SOURCE_DIR}/src/Paddle.cpp
     ${CMAKE_SOURCE_DIR}/src/Ball.cpp
-    ${CMAKE_SOURCE_DIR}/include/Ball.h
-    ${CMAKE_SOURCE_DIR}/include/FontManager.h
-    ${CMAKE_SOURCE_DIR}/src/FontManager.cpp)
+    ${CMAKE_SOURCE_DIR}/include/Ball.h)
 
 add_executable(BOClone ${SOURCES})
 

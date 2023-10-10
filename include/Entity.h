@@ -3,8 +3,7 @@
 
 #include "../include/Game.h"
 
-class Entity
-{
+class Entity {
 public:
     //virtual Entity() {};
     virtual ~Entity() {};
@@ -21,8 +20,6 @@ public:
 private:
     SDL_Rect entityRect {0, 0, 0, 0};
     bool hit {false};
-    //int xVelocity {0};
-
 };
 
 #endif

@@ -3,7 +3,6 @@
 #include "../include/Ball.h"
 #include "../include/Block.h"
 #include "../include/Entity.h"
-#include "../include/FontManager.h"
 #include <cstdio>
 
 SDL_Renderer *Game::renderer {nullptr};
@@ -14,7 +13,6 @@ int Game::currentScore = 0;
 Entity *paddle {nullptr};
 Entity *ball {nullptr};
 
-FontManager *GameFont {nullptr};
 
 std::list<Entity*> entities;
 std::list<Entity*> blocks;
@@ -74,18 +72,6 @@ void Game::initialize(const char* windowTitle, int width, int height)
     SDL_FreeSurface(textSurface);
     TTF_CloseFont(font);
 
-    
-    // GameFont = new FontManager();
-    // FontData *statFontData {nullptr};
-    // std::cout << "Crash afteer creating ptr"  << std::endl;
-    // statFontData = GameFont->createFontData("../res/windows_command_prompt.ttf", 32, textColor);
-    // std::cout << "STAT FONT DATA RECT X" << statFontData->rect.x << std::endl;
-    // //GameFont->cleanUp();
-    
-
-    
-    
-
     // Create Score Label
     scoreFont = TTF_OpenFont("../res/windows_command_prompt.ttf", 16);
     scoreSurface = TTF_RenderText_Solid(scoreFont, "Score" , textColor);
@@ -96,19 +82,7 @@ void Game::initialize(const char* windowTitle, int width, int height)
     SDL_FreeSurface(scoreSurface);
     TTF_CloseFont(scoreFont);
     Mix_OpenAudio( 44100, MIX_DEFAULT_FORMAT, 2, 2048 );
-    // // Example of coverting string to const char*
-    // std::string scoreValue = std::to_string(currentScore);
-    // const char *scoreValueString = scoreValue.c_str();
 
-    // // Create Score Value Label (Updated when score increases)
-    // scoreValueFont = TTF_OpenFont("../res/windows_command_prompt.ttf", 16);
-    // scoreValueSurface = TTF_RenderText_Solid(scoreValueFont, scoreValueString , textColor);
-    // scoreValueTexture = SDL_CreateTextureFromSurface(renderer, scoreValueSurface);
-    // scoreValueRect = {0, 0, scoreValueSurface->w, scoreValueSurface->h};
-    // scoreValueRect.x = uiRect.w / 2;
-    // scoreValueRect.y = 40;
-    // SDL_FreeSurface(scoreValueSurface);
-    // TTF_CloseFont(scoreValueFont);
     
     blockDestroySFX = Mix_LoadWAV("../res/blockDestruction.wav");
     paddleSFX = Mix_LoadWAV("../res/paddleSFX.wav");
@@ -132,9 +106,9 @@ void Game::initialize(const char* windowTitle, int width, int height)
     entities.emplace_front(paddle);
     entities.emplace_front(ball);
 
-    std::cout << "Entity List Size: " << entities.size() << std::endl;
-    std::cout << "Blocks List Size: " << blocks.size() << std::endl;
-    std::cout << "Kill List Size: " << killList.size() << std::endl;
+    // std::cout << "Entity List Size: " << entities.size() << std::endl;
+    // std::cout << "Blocks List Size: " << blocks.size() << std::endl;
+    // std::cout << "Kill List Size: " << killList.size() << std::endl;
 }
 
 void Game::handleEvents()
@@ -171,12 +145,15 @@ void Game::update() {
         }
     }
     
+    // Win when blocks are all gone
     if (blocks.empty()) {
         isRunning = false;
     }
-    std::cout << "End of Game Loop" << std::endl;
-    std::cout << "Size of Blocks:" << blocks.size() << std::endl;
-    std::cout << "Size of KillList:" << killList.size() << std::endl;
+
+    // Lose when score is below 0
+    if (currentScore < 0) {
+        isRunning = false;
+    } 
 }
 
 void Game::draw() {
@@ -189,6 +166,7 @@ void Game::draw() {
     SDL_SetRenderDrawColor(renderer, 18, 206, 106, 255);
     SDL_RenderDrawRect(renderer, &gameViewPort);
     
+    // Loop through entities and call their draw methods
     for (auto e : entities) {
         e->draw();
     }
@@ -215,19 +193,13 @@ void Game::draw() {
     SDL_RenderCopy(renderer, scoreTexture, NULL, &scoreRect);
     SDL_RenderCopy(renderer, scoreValueTexture, NULL, &scoreValueRect);
 
-    //FontData newFont = *GameFont->createFontData("../res/windows_command_prompt.ttf", 64, textColor);
-
-    //SDL_RenderCopy(renderer, newFont.texture, NULL, &newFont.rect);
-
-    //GameFont->cleanUp();
-
     SDL_RenderPresent(renderer);
 }
 
 void Game::cleanup() {
-    std::cout << "Entering Game Cleanup" << std::endl;
-    std::cout << blocks.size() << std::endl;
-    std::cout << killList.size() << std::endl;
+    std::cout << "Deallocating resources used." << std::endl;
+    // std::cout << blocks.size() << std::endl;
+    // std::cout << killList.size() << std::endl;
     delete paddle;
     delete ball;
     
@@ -245,7 +217,7 @@ void Game::handlePaddleCollisions() {
     if (SDL_HasIntersection(ball->getRect(), paddle->getRect()))
     {
         Mix_PlayChannel(-1, paddleSFX, 0);
-        //paddle->setHit(true);
+
         SDL_Rect ballRect;
         SDL_Rect paddleRect;
 
